@@ -11,3 +11,7 @@ $('form').onsubmit=async e=>{e.preventDefault();const name=$('name').value.trim(
 $('cancel').onclick=()=>{editing=null;old=null;replyTo=null;placeForm(null);$('text').value='';$('status').textContent='已取消修改';};$('refresh').onclick=()=>{if($('text').value.trim()){$('status').textContent='请先保存或取消当前输入。';return;}load().then(()=>placeForm(null)).catch(e=>$('status').textContent=e.message);};load().then(()=>placeForm(null)).catch(e=>$('status').textContent=e.message);
 
 setInterval(()=>{const all=(snap?.content.entries||[]).filter(x=>x.topic===topic);document.querySelectorAll('[data-edit]').forEach(b=>{const x=all.find(x=>x.id===b.dataset.edit);if(x)b.closest('article').style.color=entryColor(x,all);});},60000);
+
+if(new URLSearchParams(location.search).get('mode')==='updates'){
+ const sendUpdates=async()=>{try{const page=await api();parent.postMessage({type:'nexplay-qa-updates',entries:(page.content.entries||[]).map(x=>({topic:x.topic,parent_id:x.parent_id,created_at:x.created_at||x.updated_at,updated_at:x.updated_at}))},'https://dongfeng19830925-stack.github.io');}catch(e){}};sendUpdates();setInterval(sendUpdates,60000);
+}
