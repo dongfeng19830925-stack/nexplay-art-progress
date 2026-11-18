@@ -1,3 +1,11 @@
-const data=window.PROJECT;const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const put=(id,html)=>document.getElementById(id).innerHTML=html;
-function renderDecisions(filter='全部'){const items=data.decisions.filter(d=>filter==='全部'||d[1]===filter);put('decision-list',items.map(d=>`<article class="decision"><span class="id">${esc(d[0])}</span><h3><a href="https://www.nexplay.world/p/6d0b15dd31ac4f09bf4c965b9373ce84?topic=${encodeURIComponent(d[0])}">${esc(d[2])} ↗</a></h3><p>${esc(d[3])}</p><span class="category">${esc(d[1])}</span></article>`).join(''));document.getElementById('result-count').textContent=`显示 ${items.length} 项 / 共 ${data.decisions.length} 项`;}
+let topics=window.PROJECT.decisions; let shared=false;const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const put=(id,html)=>document.getElementById(id).innerHTML=html;
+function renderDecisions(filter='全部'){const items=topics.filter(d=>filter==='全部'||d[1]===filter);put('decision-list',items.map(d=>`<article class="decision"><span class="id">${esc(d[0])}</span><h3><a href="https://www.nexplay.world/p/6d0b15dd31ac4f09bf4c965b9373ce84?topic=${encodeURIComponent(d[0])}">${esc(d[2])} ↗</a></h3><p>${esc(d[3])}</p><span class="category">${esc(d[1])}${shared?` · <a href="https://www.nexplay.world/p/6d0b15dd31ac4f09bf4c965b9373ce84?mode=manage&amp;topic=${encodeURIComponent(d[0])}">编辑</a>`:''}</span></article>`).join(''));document.getElementById('result-count').textContent=`显示 ${items.length} 项 / 共 ${topics.length} 项`;}
 renderDecisions();document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b));});renderDecisions(b.dataset.filter);}));
+
+window.updateDecisionTopics = rows => {
+ if (!Array.isArray(rows)) return;
+ topics = rows;
+ shared = true;
+ document.getElementById('new-topic').hidden = false;
+ renderDecisions(document.querySelector('[data-filter].active').dataset.filter);
+};

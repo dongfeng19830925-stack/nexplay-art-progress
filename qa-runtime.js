@@ -13,5 +13,44 @@ $('cancel').onclick=()=>{editing=null;old=null;replyTo=null;placeForm(null);$('t
 setInterval(()=>{const all=(snap?.content.entries||[]).filter(x=>x.topic===topic);document.querySelectorAll('[data-edit]').forEach(b=>{const x=all.find(x=>x.id===b.dataset.edit);if(x)b.closest('article').style.color=entryColor(x,all);});},60000);
 
 if(new URLSearchParams(location.search).get('mode')==='updates'){
- const sendUpdates=async()=>{try{const page=await api();parent.postMessage({type:'nexplay-qa-updates',entries:(page.content.entries||[]).map(x=>({topic:x.topic,parent_id:x.parent_id,created_at:x.created_at||x.updated_at,updated_at:x.updated_at}))},'https://dongfeng19830925-stack.github.io');}catch(e){}};sendUpdates();setInterval(sendUpdates,60000);
+ const sendUpdates=async()=>{try{const page=await api();parent.postMessage({type:'nexplay-qa-updates',topics:page.content.topics,entries:(page.content.entries||[]).map(x=>({topic:x.topic,parent_id:x.parent_id,created_at:x.created_at||x.updated_at,updated_at:x.updated_at})).concat(page.content.topics.filter(t=>t[4]).map(t=>({topic:t[0],created_at:t[4]})))},'https://dongfeng19830925-stack.github.io');}catch(e){}};sendUpdates();setInterval(sendUpdates,60000);
 }
+async function manageTopic() {
+ const params = new URLSearchParams(location.search);
+ const id = params.get('topic');
+ const back = 'https://dongfeng19830925-stack.github.io/nexplay-art-progress/questions.html';
+ const panel = document.createElement('main');
+ panel.innerHTML = '<a href="'+back+'">返回重要决策问答</a><h1>'+(id?'编辑议题':'新增议题')+'</h1><form><label>标题 <input name="title" required maxlength="120"></label><label>分类 <select name="category"><option>策划</option><option>空间</option><option>制作</option></select></label><label>说明 <textarea name="description" maxlength="12000"></textarea></label><button disabled>保存议题</button></form><p role="status"></p>';
+ for (const child of document.body.children) if (child.tagName !== 'SCRIPT') child.hidden = true;
+ document.body.append(panel);
+ const form = panel.querySelector('form');
+ const status = panel.querySelector('[role=status]');
+ const button = form.querySelector('button');
+ try {
+  const initial = await api();
+  const original = initial.content.topics.find(row => row[0] === id);
+  if (id && !original) throw Error('找不到该议题。');
+  if (original) ['category','title','description'].forEach((field,index)=> form.elements[field].value = original[index+1]);
+  button.disabled = false;
+  form.onsubmit = async event => {
+   event.preventDefault();
+   const values = new FormData(form);
+   const title = values.get('title').trim();
+   if (!title) { status.textContent = '请输入议题标题。'; return; }
+   button.disabled = true;
+   try {
+    const latest = await api();
+    const topics = [...latest.content.topics];
+    const index = topics.findIndex(row => row[0] === id);
+    if (id && JSON.stringify(topics[index]) !== JSON.stringify(original)) throw Error('议题已被修改。请记录当前输入，重新打开后再编辑。');
+    const next = id || 'D'+String(1+Math.max(0,...topics.map(row=>Number(row[0].slice(1))||0))).padStart(2,'0');
+    const row = [next,values.get('category'),title,values.get('description').trim(),original?.[4] || new Date().toISOString()];
+    if (id) topics[index] = row;
+    else topics.unshift(row);
+    await api({content:{...latest.content,topics},expected_content_revision:latest.content_revision,version_message:id?'编辑重要决策议题':'新增重要决策议题'});
+    location.assign(back);
+   } catch(error) { status.textContent = error.message; button.disabled = false; }
+  };
+ } catch(error) { status.textContent = error.message; }
+}
+if(new URLSearchParams(location.search).get('mode')==='manage') manageTopic();
