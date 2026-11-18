@@ -42,4 +42,9 @@
 
 ## 甲方需求地图
 
-[交互需求页](https://dongfeng19830925-stack.github.io/nexplay-art-progress/requirements.html) · 数据为requirements.json。平面来自点位PDF的局部裁切，人工热点用于导航，不是精确施工边界。在线多人编辑与附件后台待后续接入。
+[交互需求页](https://dongfeng19830925-stack.github.io/nexplay-art-progress/requirements.html) · 数据为requirements.json。平面来自点位PDF的局部裁切，人工热点用于导航，不是精确施工边界。道具共享补充已接入Nexplay Pages与OSS，完整成果管理仍待扩展。
+
+## 道具协作
+
+[共享道具协作台](https://www.nexplay.world/p/5073efe36816492e83ea9381b0ddf4bd)支持文字、数量、图片上传与拖拽。数据在Nexplay Pages共享保存，图片在OSS长期保存，详情见[存储说明](STORAGE.md)。
+
