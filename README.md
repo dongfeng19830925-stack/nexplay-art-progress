@@ -39,3 +39,7 @@
 
 后续每次项目讨论更新时追加当日日志，保留更正和决策来源。GitHub Pages从main根目录发布，提交后自动构建。
 
+
+## 甲方需求地图
+
+[交互需求页](https://dongfeng19830925-stack.github.io/nexplay-art-progress/requirements.html) · 数据为requirements.json。平面来自点位PDF的局部裁切，人工热点用于导航，不是精确施工边界。在线多人编辑与附件后台待后续接入。
