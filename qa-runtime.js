@@ -20,7 +20,7 @@ async function manageTopic() {
  const id = params.get('topic');
  const back = 'https://dongfeng19830925-stack.github.io/nexplay-art-progress/questions.html';
  const panel = document.createElement('main');
- panel.innerHTML = '<a href="'+back+'">返回重要决策问答</a><h1>'+(id?'编辑议题':'新增议题')+'</h1><form><label>标题 <input name="title" required maxlength="120"></label><label>部门或专业口 <input name="category" list="topic-departments" required maxlength="40" placeholder="选择或填写部门或专业口"></label><datalist id="topic-departments"></datalist><label>说明 <textarea name="description" maxlength="12000"></textarea></label><button disabled>保存议题</button></form><p role="status"></p>';
+ panel.innerHTML = '<a href="'+back+'">返回重要决策问答</a><h1>'+(id?'编辑议题':'新增议题')+'</h1><form><label>标题 <input name="title" required maxlength="120"></label><label>部门或专业口 <select name="category" required><option value="">请选择</option><option>游戏策划</option><option>美术设计</option><option>落地执行</option></select></label><label>说明 <textarea name="description" maxlength="12000"></textarea></label><button disabled>保存议题</button></form><p role="status"></p>';
  for (const child of document.body.children) if (child.tagName !== 'SCRIPT') child.hidden = true;
  document.body.append(panel);
  const form = panel.querySelector('form');
@@ -28,12 +28,6 @@ async function manageTopic() {
  const button = form.querySelector('button');
  try {
   const initial = await api();
-  const departments = new Set(['策划','空间','制作','美术','建筑','结构','机电','灯光','多媒体','技术','运营','采购','施工','跨部门', ...initial.content.topics.map(row => row[1])]);
-  for (const department of departments) {
-   const option = document.createElement('option');
-   option.value = department;
-   panel.querySelector('datalist').append(option);
-  }
   const original = initial.content.topics.find(row => row[0] === id);
   if (id && !original) throw Error('找不到该议题。');
   if (original) ['category','title','description'].forEach((field,index)=> form.elements[field].value = original[index+1]);
