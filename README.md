@@ -32,3 +32,10 @@
 
 本地预览：在本目录执行 `python -m http.server 4173`，浏览 `http://localhost:4173`。
 
+
+## 知识库与讨论日志
+
+[知识库入口](KNOWLEDGE.md) · [11月17日日志](discussion-2026-11-17.md) · [11月18日日志](discussion-2026-11-18.md) · [日志模板](discussion-template.md)
+
+后续每次项目讨论更新时追加当日日志，保留更正和决策来源。GitHub Pages从main根目录发布，提交后自动构建。
+
